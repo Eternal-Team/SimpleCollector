@@ -1,0 +1,1 @@
+Adds a simple item collector to collect in-world items

@@ -1,0 +1,18 @@
+﻿Mods: {
+	SimpleCollector: {
+		ItemName: {
+			ItemCollector: Item Collector
+		}
+		
+		ItemTooltip: {
+			ItemCollector: 
+			'''
+			boop boop
+			'''
+		}
+	
+		MapObject: {
+			ItemCollector: Item Collector
+		}
+	}
+}
