@@ -6,6 +6,7 @@ using BaseLibrary.Utility;
 using ContainerLibrary;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader.IO;
 
 namespace SimpleCollector.TileEntities;
@@ -29,9 +30,9 @@ public class ItemCollector : BaseTileEntity, IItemStorage, IHasUI
 		{
 			ref Item item = ref Main.item[i];
 
-			if (!item.active || item.IsAir) continue;
+			if (item is null || !item.active || item.IsAir || !ItemStorageUtility.IsValidItemForStorage(item)) continue;
 
-			if (item.getRect().Intersects(new Rectangle(Position.X * 16, Position.Y * 16, 32, 32))) // todo: forbid hearts, mana, nebula drops, etc...
+			if (item.getRect().Intersects(new Rectangle(Position.X * 16, Position.Y * 16, 32, 32)))
 			{
 				Storage.InsertItem(this, ref item);
 			}
