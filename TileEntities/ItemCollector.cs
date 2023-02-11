@@ -6,22 +6,30 @@ using BaseLibrary.Utility;
 using ContainerLibrary;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader.IO;
 
 namespace SimpleCollector.TileEntities;
 
 public class ItemCollector : BaseTileEntity, IItemStorage, IHasUI
 {
+	private class ItemCollectorStorage : ItemStorage
+	{
+		public ItemCollectorStorage(int size) : base(size)
+		{
+		}
+
+		public override bool CanInteract(int slot, Operation operation, object user) => user is ItemCollector || !operation.HasFlag(Operation.Insert);
+	}
+
 	protected override Type TileType => typeof(Tiles.ItemCollector);
 
 	private new Guid ID;
-	private ItemStorage Storage;
+	private ItemCollectorStorage Storage;
 
 	public ItemCollector()
 	{
 		ID = Guid.NewGuid();
-		Storage = new ItemStorage(81); // extract-only storage?
+		Storage = new ItemCollectorStorage(81);
 	}
 
 	public override void Update()
@@ -32,6 +40,8 @@ public class ItemCollector : BaseTileEntity, IItemStorage, IHasUI
 
 			if (item is null || !item.active || item.IsAir || !ItemStorageUtility.IsValidItemForStorage(item)) continue;
 
+			// draw items in, when item is in center, collect
+			// draw some fancy graphic
 			if (item.getRect().Intersects(new Rectangle(Position.X * 16, Position.Y * 16, 32, 32)))
 			{
 				Storage.InsertItem(this, ref item);
