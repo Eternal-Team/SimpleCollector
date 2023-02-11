@@ -26,7 +26,7 @@ public class ItemCollector : ModTile
 		TileObjectData.addTile(Type);
 
 		ModTranslation name = CreateMapEntryName();
-		AddMapEntry(Color.Purple, name);
+		AddMapEntry(Color.Aquamarine, name);
 	}
 
 	public override bool RightClick(int i, int j)

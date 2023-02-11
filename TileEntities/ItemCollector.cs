@@ -6,6 +6,7 @@ using BaseLibrary.Utility;
 using ContainerLibrary;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader.IO;
 
 namespace SimpleCollector.TileEntities;
@@ -32,19 +33,36 @@ public class ItemCollector : BaseTileEntity, IItemStorage, IHasUI
 		Storage = new ItemCollectorStorage(81);
 	}
 
+	private const int Distance = 16 * 10;
+
+	public static Dust QuickDust(Vector2 pos, Color color)
+	{
+		Dust dust = Dust.NewDustDirect(pos, 0, 0, DustID.Clentaminator_Cyan);
+		dust.position = pos;
+		dust.velocity = Vector2.Zero;
+		dust.fadeIn = 1f;
+		dust.noLight = true;
+		dust.noGravity = true;
+		dust.color = color;
+		return dust;
+	}
+
 	public override void Update()
 	{
+		Vector2 center = Position.ToWorldCoordinates(16f, 16f);
+		
 		for (int i = 0; i < Main.item.Length; i++)
 		{
 			ref Item item = ref Main.item[i];
 
-			if (item is null || !item.active || item.IsAir || !ItemStorageUtility.IsValidItemForStorage(item)) continue;
+			if (item is null || !item.active || item.IsAir || !ItemStorageUtility.IsValidItemForStorage(item) || item.IsACoin) continue;
 
-			// draw items in, when item is in center, collect
-			// draw some fancy graphic
-			if (item.getRect().Intersects(new Rectangle(Position.X * 16, Position.Y * 16, 32, 32)))
+			Vector2 itemCenter = item.Center;
+			if (Vector2.DistanceSquared(center, itemCenter) <= Distance * Distance && Storage.InsertItem(this, ref item))
 			{
-				Storage.InsertItem(this, ref item);
+				// todo: check if this works in MP
+				for (float t = 0.0f; t <= 1.0f; t += 0.1f)
+					QuickDust(Vector2.Lerp(itemCenter, center, t), Color.White);
 			}
 		}
 	}
